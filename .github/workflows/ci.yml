@@ -22,7 +22,7 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: gradle
-      - run: ./gradlew clean check publishToMavenLocal --no-daemon
+      - run: bash ./gradlew clean check publishToMavenLocal --no-daemon
         if: runner.os != 'Windows'
       - run: .\gradlew.bat clean check publishToMavenLocal --no-daemon
         if: runner.os == 'Windows'
