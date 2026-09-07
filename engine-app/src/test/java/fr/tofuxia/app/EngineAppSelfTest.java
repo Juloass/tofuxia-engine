@@ -364,7 +364,7 @@ public final class EngineAppSelfTest {
         public void tick(SceneTickContext context) {
             ticks.incrementAndGet();
             lastDeltaSeconds = context.fixedDeltaSeconds();
-            lastHotbarSelection = context.hotbarSelection();
+            if (context.hotbarSelection() >= 0) lastHotbarSelection = context.hotbarSelection();
             if (context.gameModeToggle()) gameModeToggles++;
             if (context.leftMouseClicked()) {
                 leftClicks++;
