@@ -1,0 +1,27 @@
+pluginManagement {
+    repositories { gradlePluginPortal() }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven {
+            name = 'juloassPublic'
+            url = uri('https://raw.githubusercontent.com/Juloass/maven/main/releases')
+            content { includeGroup 'io.github.juloass' }
+        }
+        maven {
+            name = 'mojangLibraries'
+            url = uri('https://libraries.minecraft.net')
+            content { includeGroup 'com.mojang' }
+        }
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'tofuxia-engine'
+include 'engine-core', 'render-api', 'engine-ui', 'vulkan-renderer', 'engine-app', 'engine-desktop'

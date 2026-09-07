@@ -1,0 +1,41 @@
+plugins {
+	id 'java-library'
+}
+
+dependencies {
+	api project(':engine-core')
+	api 'io.github.juloass:localization-core:0.1.0'
+	api 'io.github.juloass:math:1.0.0'
+	api 'io.github.juloass:ui-animation:1.0.0'
+}
+
+tasks.register('uiContextSelfTest', JavaExec) {
+	group = 'verification'
+	description = 'Runs focused UI context layout/theme self-tests.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'fr.tofuxia.ui.UiContextSelfTest'
+	workingDir = rootProject.projectDir
+	dependsOn tasks.named('testClasses')
+}
+
+tasks.register('uiDisplayMatrixSelfTest', JavaExec) {
+	group = 'verification'
+	description = 'Renders deterministic resolution, DPI, aspect-ratio, and UI-scale snapshots.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'fr.tofuxia.ui.UiDisplayMatrixSelfTest'
+	workingDir = rootProject.projectDir
+	dependsOn tasks.named('testClasses')
+}
+
+tasks.register('uiSurfaceSelfTest', JavaExec) {
+	group = 'verification'
+	description = 'Validates analytic surface geometry, states, clipping, scale, and batching.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'fr.tofuxia.ui.UiSurfaceSelfTest'
+	workingDir = rootProject.projectDir
+	dependsOn tasks.named('testClasses')
+}
+
+check.dependsOn tasks.named('uiContextSelfTest')
+check.dependsOn tasks.named('uiDisplayMatrixSelfTest')
+check.dependsOn tasks.named('uiSurfaceSelfTest')

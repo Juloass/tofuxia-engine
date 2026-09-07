@@ -1,0 +1,50 @@
+plugins {
+	id 'java-library'
+}
+
+dependencies {
+	api 'io.github.juloass:content-bootstrap:1.0.0'
+	api 'io.github.juloass:identifier:1.0.0'
+	api 'io.github.juloass:registry:1.0.0'
+	api 'io.github.juloass:task-graph:1.0.0'
+	api 'io.github.juloass:resource-core:1.0.0'
+	api 'io.github.juloass:resource-pack:1.0.0'
+	testImplementation 'io.github.juloass:resource-source-generated:1.0.0'
+	api "org.joml:joml:${rootProject.ext.jomlVersion}"
+	implementation platform("org.lwjgl:lwjgl-bom:${rootProject.ext.lwjglVersion}")
+	implementation "org.lwjgl:lwjgl"
+	implementation "org.lwjgl:lwjgl-freetype"
+	implementation "org.lwjgl:lwjgl-harfbuzz"
+	implementation "org.lwjgl:lwjgl::${rootProject.ext.lwjglNatives}"
+	implementation "org.lwjgl:lwjgl-freetype::${rootProject.ext.lwjglNatives}"
+	implementation "org.lwjgl:lwjgl-harfbuzz::${rootProject.ext.lwjglNatives}"
+}
+
+tasks.register('fontAtlasSelfTest', JavaExec) {
+	group = 'verification'
+	description = 'Runs font atlas glyph identity and rasterization checks.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'fr.tofuxia.render.FontAtlasSelfTest'
+	workingDir = rootProject.projectDir
+	dependsOn tasks.named('testClasses')
+}
+
+tasks.register('fontCatalogSelfTest', JavaExec) {
+	group = 'verification'
+	description = 'Validates asset-backed font roles, face selection, and atlas reuse.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'fr.tofuxia.render.FontCatalogSelfTest'
+	workingDir = rootProject.projectDir
+	dependsOn tasks.named('testClasses')
+}
+
+tasks.register('entityAttributeSelfTest', JavaExec) {
+	group = 'verification'
+	description = 'Validates typed entity attribute codecs, defaults, and dirty tracking.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'fr.tofuxia.entity.attribute.EntityAttributeSelfTest'
+	dependsOn tasks.named('testClasses')
+}
+
+check.dependsOn tasks.named('fontAtlasSelfTest')
+check.dependsOn tasks.named('entityAttributeSelfTest')

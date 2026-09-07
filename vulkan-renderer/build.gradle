@@ -1,0 +1,59 @@
+plugins {
+	id 'java-library'
+}
+
+dependencies {
+	api project(':engine-core')
+	api project(':render-api')
+	api "org.joml:joml:${rootProject.ext.jomlVersion}"
+
+	implementation platform("org.lwjgl:lwjgl-bom:${rootProject.ext.lwjglVersion}")
+	implementation "org.lwjgl:lwjgl"
+	implementation "org.lwjgl:lwjgl-glfw"
+	implementation "org.lwjgl:lwjgl-shaderc"
+	implementation "org.lwjgl:lwjgl-vulkan"
+	implementation "org.lwjgl:lwjgl::${rootProject.ext.lwjglNatives}"
+	implementation "org.lwjgl:lwjgl-glfw::${rootProject.ext.lwjglNatives}"
+	implementation "org.lwjgl:lwjgl-shaderc::${rootProject.ext.lwjglNatives}"
+}
+
+tasks.register('rendererSelfTest', JavaExec) {
+	group = 'verification'
+	description = 'Runs headless renderer architecture checks (materials, shader variants, glTF import).'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'fr.tofuxia.renderer.RendererSelfTest'
+	workingDir = rootProject.projectDir
+	dependsOn tasks.named('testClasses')
+}
+
+tasks.register('appRendererAdapterSelfTest', JavaExec) {
+	group = 'verification'
+	description = 'Runs headless main-app adapter conversion checks, including legacy projected-shadow mesh compatibility.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'fr.tofuxia.renderer.AppMeshAdapterSelfTest'
+	workingDir = rootProject.projectDir
+	dependsOn tasks.named('testClasses')
+}
+
+tasks.register('debugTextMeshSelfTest', JavaExec) {
+	group = 'verification'
+	description = 'Runs the first standard test-source renderer check for debug overlay glyph meshes.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'fr.tofuxia.renderer.DebugTextMeshSelfTest'
+	workingDir = rootProject.projectDir
+	dependsOn tasks.named('testClasses')
+}
+
+tasks.register('uiSurfaceRendererSelfTest', JavaExec) {
+	group = 'verification'
+	description = 'Compiles the embedded analytic UI surface shaders.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'fr.tofuxia.renderer.UiSurfaceRendererSelfTest'
+	workingDir = rootProject.projectDir
+	dependsOn tasks.named('testClasses')
+}
+
+check.dependsOn tasks.named('rendererSelfTest')
+check.dependsOn tasks.named('appRendererAdapterSelfTest')
+check.dependsOn tasks.named('debugTextMeshSelfTest')
+check.dependsOn tasks.named('uiSurfaceRendererSelfTest')

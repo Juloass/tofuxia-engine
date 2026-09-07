@@ -1,0 +1,24 @@
+plugins {
+	id 'java-library'
+}
+
+dependencies {
+	api project(':engine-core')
+	api project(':engine-ui')
+	api 'io.github.juloass:localization-core:0.1.0'
+	api 'io.github.juloass:audio-core:1.0.0'
+	api 'io.github.juloass:input-core:1.0.0'
+	api 'io.github.juloass:particle-engine:1.0.0'
+	api project(':vulkan-renderer')
+	implementation "org.joml:joml:${rootProject.ext.jomlVersion}"
+}
+
+tasks.register('engineAppSelfTest', JavaExec) {
+	group = 'verification'
+	description = 'Validates engine-owned scene registration and runtime helpers.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'fr.tofuxia.app.EngineAppSelfTest'
+	dependsOn tasks.named('testClasses')
+}
+
+check.dependsOn tasks.named('engineAppSelfTest')

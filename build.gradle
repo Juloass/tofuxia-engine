@@ -1,0 +1,83 @@
+plugins { id 'base' }
+
+group = 'io.github.juloass.tofuxia-engine'
+version = '0.1.0'
+
+ext.lwjglVersion = '3.4.1'
+ext.jomlVersion = '1.10.9'
+ext.jomlPrimitivesVersion = '1.10.0'
+ext.nettyVersion = '4.1.127.Final'
+ext.protobufVersion = '4.31.1'
+ext.brigadierVersion = '1.0.18'
+
+def operatingSystem = System.getProperty('os.name').toLowerCase(Locale.ROOT)
+def architecture = System.getProperty('os.arch').toLowerCase(Locale.ROOT)
+ext.lwjglNatives = operatingSystem.contains('win')
+        ? (architecture.contains('aarch64') || architecture.contains('arm64') ? 'natives-windows-arm64' : 'natives-windows')
+        : operatingSystem.contains('mac')
+        ? (architecture.contains('aarch64') || architecture.contains('arm64') ? 'natives-macos-arm64' : 'natives-macos')
+        : operatingSystem.contains('linux')
+        ? (architecture.contains('aarch64') || architecture.contains('arm64') ? 'natives-linux-arm64' : 'natives-linux')
+        : { throw new GradleException("Unsupported native platform: ${operatingSystem}/${architecture}") }()
+
+subprojects {
+    group = rootProject.group
+    version = rootProject.version
+
+    pluginManager.apply('maven-publish')
+
+    plugins.withId('java-library') {
+        java {
+            toolchain.languageVersion = JavaLanguageVersion.of(21)
+            withSourcesJar()
+            withJavadocJar()
+        }
+        tasks.withType(JavaCompile).configureEach {
+            options.encoding = 'UTF-8'
+            options.release = 21
+        }
+        tasks.withType(Test).configureEach {
+            // The extracted codebase uses explicit JavaExec self-tests rather than JUnit suites.
+            enabled = false
+        }
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    from components.java
+                    pom {
+                        name = project.name
+                        description = "Reusable ${project.name} module for Java games."
+                    }
+                }
+            }
+        }
+    }
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('verifyModuleBoundaries')
+    dependsOn subprojects.collect { "${it.path}:check" }
+}
+
+tasks.register('verifyModuleBoundaries') {
+    group = 'verification'
+    description = 'Rejects reusable engine dependencies on game, server, or network implementation modules.'
+    doLast {
+        def violations = []
+        subprojects.each { engineProject ->
+            engineProject.fileTree(engineProject.projectDir) {
+                include 'build.gradle', 'src/**/*.java'
+            }.each { source ->
+                source.eachLine { line, number ->
+                    if (line =~ /project\s*\(\s*['"]:(?:game-|engine-net|.*server)/ ||
+                            line =~ /^\s*import\s+fr\.tofuxia\.(?:gamenet|game|server|net)\./) {
+                        violations << "${rootProject.relativePath(source)}:${number} ${line.trim()}"
+                    }
+                }
+            }
+        }
+        if (!violations.empty) {
+            throw new GradleException("Engine boundary violations:\n - " + violations.join('\n - '))
+        }
+    }
+}
