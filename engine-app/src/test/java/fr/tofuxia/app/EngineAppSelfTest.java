@@ -290,7 +290,10 @@ public final class EngineAppSelfTest {
                     false, false, 0, 0, 0, 0, 0, 0, false));
             runner.submitEvents(new ClientInputEvents(false, true, -1,
                     false, false, 0, 0, 0, 0, 0, 0, false));
-            sleepMillis(120);
+            long repeatedEventDeadline = System.nanoTime() + 2_000_000_000L;
+            while (scene.gameModeToggles() != 3 && System.nanoTime() < repeatedEventDeadline) {
+                Thread.onSpinWait();
+            }
             require(scene.gameModeToggles() == 3, "simulation runner preserves repeated edge events across ticks");
             require(runner.stats().totalLateTicks() >= runner.stats().lateTicks(),
                     "simulation runner separates cumulative and current lateness");
