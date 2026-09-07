@@ -276,7 +276,10 @@ public final class EngineAppSelfTest {
             runner.submitEvents(new ClientInputEvents(false, true, 3,
                     true, false, 1.0f, 2.0f, 3.0f, 0.0f, -1.0f, 0.0f, true));
             runner.submitInput(ClientInputSample.empty());
-            sleepMillis(70);
+            long eventDeadline = System.nanoTime() + 2_000_000_000L;
+            while (scene.lastHotbarSelection() != 3 && System.nanoTime() < eventDeadline) {
+                Thread.onSpinWait();
+            }
             require(Math.abs(scene.lastDeltaSeconds() - ClientSimulationRunner.FIXED_DELTA_SECONDS) < 0.0001f,
                     "simulation runner uses fixed tick dt");
             require(scene.lastHotbarSelection() == 3, "simulation runner drains queued hotbar input");

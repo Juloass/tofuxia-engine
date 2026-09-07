@@ -15,9 +15,6 @@ dependencies {
 	implementation "org.lwjgl:lwjgl"
 	implementation "org.lwjgl:lwjgl-freetype"
 	implementation "org.lwjgl:lwjgl-harfbuzz"
-	implementation "org.lwjgl:lwjgl::${rootProject.ext.lwjglNatives}"
-	implementation "org.lwjgl:lwjgl-freetype::${rootProject.ext.lwjglNatives}"
-	implementation "org.lwjgl:lwjgl-harfbuzz::${rootProject.ext.lwjglNatives}"
 }
 
 tasks.register('fontAtlasSelfTest', JavaExec) {

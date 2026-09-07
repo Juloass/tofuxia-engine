@@ -12,9 +12,6 @@ dependencies {
 	implementation "org.lwjgl:lwjgl-glfw"
 	implementation "org.lwjgl:lwjgl-shaderc"
 	implementation "org.lwjgl:lwjgl-vulkan"
-	implementation "org.lwjgl:lwjgl::${rootProject.ext.lwjglNatives}"
-	implementation "org.lwjgl:lwjgl-glfw::${rootProject.ext.lwjglNatives}"
-	implementation "org.lwjgl:lwjgl-shaderc::${rootProject.ext.lwjglNatives}"
 }
 
 tasks.register('rendererSelfTest', JavaExec) {

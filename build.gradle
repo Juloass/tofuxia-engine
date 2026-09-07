@@ -27,6 +27,15 @@ subprojects {
     pluginManager.apply('maven-publish')
 
     plugins.withId('java-library') {
+        dependencies {
+            testRuntimeOnly platform("org.lwjgl:lwjgl-bom:${rootProject.ext.lwjglVersion}")
+            testRuntimeOnly "org.lwjgl:lwjgl::${rootProject.ext.lwjglNatives}"
+            testRuntimeOnly "org.lwjgl:lwjgl-freetype::${rootProject.ext.lwjglNatives}"
+            testRuntimeOnly "org.lwjgl:lwjgl-glfw::${rootProject.ext.lwjglNatives}"
+            testRuntimeOnly "org.lwjgl:lwjgl-harfbuzz::${rootProject.ext.lwjglNatives}"
+            testRuntimeOnly "org.lwjgl:lwjgl-openal::${rootProject.ext.lwjglNatives}"
+            testRuntimeOnly "org.lwjgl:lwjgl-shaderc::${rootProject.ext.lwjglNatives}"
+        }
         java {
             toolchain.languageVersion = JavaLanguageVersion.of(21)
             withSourcesJar()

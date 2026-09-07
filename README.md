@@ -21,10 +21,17 @@ repositories {
 
 dependencies {
     implementation 'io.github.juloass.tofuxia-engine:engine-desktop:0.1.0'
+    runtimeOnly 'org.lwjgl:lwjgl::natives-windows'
+    runtimeOnly 'org.lwjgl:lwjgl-freetype::natives-windows'
+    runtimeOnly 'org.lwjgl:lwjgl-glfw::natives-windows'
+    runtimeOnly 'org.lwjgl:lwjgl-harfbuzz::natives-windows'
+    runtimeOnly 'org.lwjgl:lwjgl-openal::natives-windows'
+    runtimeOnly 'org.lwjgl:lwjgl-shaderc::natives-windows'
 }
 ```
 
 `engine-desktop` is offline by default. A networked game supplies a `DesktopNetworkFactory`; the engine contains no game protocol or server dependency.
+Applications select their own LWJGL native classifiers; replace `natives-windows` for Linux, macOS, or ARM targets.
 
 ## Validation
 
