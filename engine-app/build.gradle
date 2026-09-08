@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+	api project(':engine-default-assets')
 	api project(':engine-core')
 	api project(':engine-ui')
 	api 'io.github.juloass:localization-core:0.1.0'

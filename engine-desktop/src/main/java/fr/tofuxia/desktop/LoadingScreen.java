@@ -14,14 +14,16 @@ final class LoadingScreen {
     private final float userScale;
     private final float textScale;
     private final Localization localization;
+    private final String windowTitle;
 
     LoadingScreen(FontAtlas uiFont, FontAtlas gameTitleFont, float userScale, float textScale,
-                  Localization localization) {
+                  Localization localization, String windowTitle) {
         this.uiFont = uiFont;
         this.gameTitleFont = gameTitleFont;
         this.userScale = Math.max(.75f, Math.min(2, userScale));
         this.textScale = Math.max(1, Math.min(1.5f, textScale));
         this.localization = localization;
+        this.windowTitle = windowTitle;
     }
 
     UiRenderData build(DisplayMetrics display, LoadingManager.Snapshot state) {
@@ -34,7 +36,7 @@ final class LoadingScreen {
 
         float panelW=Math.min(560,w-64),panelX=(w-panelW)*.5f;
         float titleY=Math.max(48,h*.5f-gameTitleFont.lineHeight()-52);
-        textCentered(ui,gameTitleFont,w,titleY,"Tofuxia",rgba(1,1,1,1));
+        textCentered(ui,gameTitleFont,w,titleY,windowTitle,rgba(1,1,1,1));
 
         float globalBarY=titleY+gameTitleFont.lineHeight()+34,globalBarH=8;
         progressTrack(ui,panelX,globalBarY,panelW,globalBarH,state.progress());
@@ -69,7 +71,7 @@ final class LoadingScreen {
         textCentered(ui,uiFont,w,taskBarY+30,truncate(detail,82),rgba(.72f,.72f,.72f,1));
         if(!state.error().isBlank()){
             textCentered(ui,uiFont,w,taskBarY+58,localization.resolvePlainText(
-                    TextComponent.translatable("screen.tofuxia.loading.failed")),rgba(1,.35f,.35f,1));
+                    TextComponent.translatable("screen.engine.loading.failed")),rgba(1,.35f,.35f,1));
             textCentered(ui,uiFont,w,taskBarY+84,truncate(state.error(),92),rgba(1,1,1,1));
         }
         return ui.toRenderData();

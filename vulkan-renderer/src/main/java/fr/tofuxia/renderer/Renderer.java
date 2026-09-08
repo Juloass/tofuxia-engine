@@ -227,16 +227,16 @@ public final class Renderer implements GameRenderer {
 
         static RendererInputs resources(ResourceSnapshot snapshot) {
             RendererResources resources = new RendererResources(
-                    snapshot, "tofuxia");
+                    snapshot, "engine");
             return new RendererInputs(
                     null,
                     resources,
                     ShaderSources.resources(
-                            snapshot, "tofuxia", "shaders"));
+                            snapshot, "engine", "shaders"));
         }
 
         private static Path shaderRoot(Path assetRoot) {
-            Path namespaced = assetRoot.resolve("tofuxia")
+            Path namespaced = assetRoot.resolve("engine")
                     .resolve("shaders");
             return java.nio.file.Files.isDirectory(namespaced)
                     ? namespaced

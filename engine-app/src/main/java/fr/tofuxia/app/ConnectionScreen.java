@@ -103,8 +103,8 @@ final class ConnectionScreen {
         int countdownSecond = retryCooldown > 0 ? (int) Math.ceil(retryCooldown) : 0;
         animateCountdownTick(ui, countdownSecond);
         TextComponent label = countdownSecond > 0
-                ? TextComponent.translatable("screen.tofuxia.connection.retry_in", countdownSecond)
-                : TextComponent.translatable("screen.tofuxia.connection.retry");
+                ? TextComponent.translatable("screen.engine.connection.retry_in", countdownSecond)
+                : TextComponent.translatable("screen.engine.connection.retry");
         UiSurface retry = new UiSurface("connection-screen/retry",
                 solidButtonStyle(ui, ready ? ui.theme().orange : ui.theme().charcoal, .36f))
                 .stateStyle(fr.tofuxia.ui.UiVisualState.HOVERED,
@@ -270,7 +270,7 @@ final class ConnectionScreen {
             case "Connection error" -> "error";
             default -> null;
         };
-        return key == null ? TextComponent.literal(value) : TextComponent.translatable("screen.tofuxia.connection." + key);
+        return key == null ? TextComponent.literal(value) : TextComponent.translatable("screen.engine.connection." + key);
     }
 
     record StatusPresentation(String title, String detail) {}

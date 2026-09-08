@@ -48,7 +48,10 @@ public final class DesktopEngine {
         fr.tofuxia.app.ClientSettingsState initialSettings = clientSettings.state();
         fr.tofuxia.app.ClientSettingsState.Graphics initialGraphics = initialSettings.graphics();
         System.setProperty("tofuxia.presentMode", initialGraphics.vsync() ? "fifo" : "mailbox-preferred");
-        long window = createConfiguredWindow(initialGraphics);
+        GameBuilder builder = new GameBuilder();
+        module.configure(builder);
+        GameConfig config = builder.build();
+        long window = createConfiguredWindow(initialGraphics, config.windowTitle());
         if (window == 0) {
             glfwTerminate();
             throw new IllegalStateException("Window creation failed");
@@ -64,9 +67,6 @@ public final class DesktopEngine {
         java.util.concurrent.ExecutorService bootstrapWorker = java.util.concurrent.Executors.newSingleThreadExecutor(
                 Thread.ofPlatform().name("tofuxia-content-bootstrap").factory());
         try {
-            GameBuilder builder = new GameBuilder();
-            module.configure(builder);
-            GameConfig config = builder.build();
             ResourceManager.Builder assetManagerBuilder =
                     ResourceManager.builder(
                             ResourceDomain.ASSETS,
@@ -113,7 +113,7 @@ public final class DesktopEngine {
             FontAtlas debugFont = activeFonts.atlas(FontRole.DEBUG, 15);
             FontAtlas gameTitleFont = activeFonts.atlas(FontRole.GAME_TITLE, 52);
             LoadingScreen loadingScreen = new LoadingScreen(uiFont, gameTitleFont, (float) initialGraphics.uiScale(),
-                    (float) initialSettings.accessibility().textScale(), localization);
+                    (float) initialSettings.accessibility().textScale(), localization, config.windowTitle());
             bootstrap = new BootstrapRenderer(window, uiFont, gameTitleFont);
             bootstrap.render(loadingScreen.build(displayMetrics(window),
                     new LoadingManager.Snapshot(fr.tofuxia.app.AppState.BOOT_LOADING,
@@ -246,7 +246,7 @@ public final class DesktopEngine {
         })).toList();
     }
 
-    private static long createConfiguredWindow(fr.tofuxia.app.ClientSettingsState.Graphics graphics) {
+    private static long createConfiguredWindow(fr.tofuxia.app.ClientSettingsState.Graphics graphics, String windowTitle) {
         int[] requested = resolution(graphics.resolution());
         long primaryMonitor = glfwGetPrimaryMonitor();
         var videoMode = primaryMonitor == 0 ? null : glfwGetVideoMode(primaryMonitor);
@@ -265,7 +265,7 @@ public final class DesktopEngine {
         glfwWindowHint(GLFW_FOCUS_ON_SHOW, GLFW_TRUE);
         glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
         glfwWindowHint(GLFW_SCALE_FRAMEBUFFER, GLFW_TRUE);
-        long window = glfwCreateWindow(width, height, "Tofuxia", fullscreen ? primaryMonitor : 0, 0);
+        long window = glfwCreateWindow(width, height, windowTitle, fullscreen ? primaryMonitor : 0, 0);
         if (window == 0) return 0;
 
         if (!fullscreen && primaryMonitor != 0) {

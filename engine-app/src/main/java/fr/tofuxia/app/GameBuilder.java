@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 public final class GameBuilder {
-    private String windowTitle = "Tofuxia";
+    private String windowTitle = "Java Game";
     private Path assetRoot = Path.of("assets");
-    private Path fontManifest = Path.of("fonts.properties");
+    private Path fontManifest = Path.of("engine/fonts/fonts.properties");
     private String connectionBackground = "";
     private String defaultScene = "render";
     private final Map<String, GameSceneFactory> scenes = new LinkedHashMap<>();
@@ -24,7 +24,8 @@ public final class GameBuilder {
     private ParticleSceneSupport particles = ParticleSceneSupport.none();
     private AudioSupport audioSupport;
     private final List<ContentModule> contentModules = new ArrayList<>();
-    private final List<ResourcePackCandidate> resourcePacks = new ArrayList<>();
+    private final List<ResourcePackCandidate> resourcePacks = new ArrayList<>(
+            List.of(fr.tofuxia.assets.EngineDefaultAssets.resourcePack()));
     private final List<ResourceType<?>> resourceTypes = new ArrayList<>();
 
     public GameBuilder windowTitle(String value) {

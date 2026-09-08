@@ -851,9 +851,9 @@ public final class EngineLoop {
         if(appState==AppState.WORLD_LOADING||appState==AppState.MAIN_MENU){
             String stateKey=appState==AppState.WORLD_LOADING?"world_loading":"main_menu";
             String title=ui.localization().resolvePlainText(io.github.juloass.localization.TextComponent.translatable(
-                    "screen.tofuxia.engine."+stateKey+".title"));
+                    "screen.engine."+stateKey+".title"));
             String detail=ui.localization().resolvePlainText(io.github.juloass.localization.TextComponent.translatable(
-                    "screen.tofuxia.engine."+stateKey+".detail"));
+                    "screen.engine."+stateKey+".detail"));
             float panelWidth=430;
             float x=Math.max(12,(ui.width()-panelWidth)*.5f);
             float y=Math.max(12,ui.height()*.42f);

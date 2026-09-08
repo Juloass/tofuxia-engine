@@ -1,0 +1,8 @@
+plugins { id 'java-library' }
+
+dependencies {
+    api 'io.github.juloass:identifier:1.0.0'
+    api 'io.github.juloass:resource-core:1.0.0'
+    api 'io.github.juloass:resource-pack:1.0.0'
+    implementation 'io.github.juloass:resource-source-generated:1.0.0'
+}

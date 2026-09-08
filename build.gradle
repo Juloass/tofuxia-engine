@@ -1,7 +1,7 @@
 plugins { id 'base' }
 
 group = 'io.github.juloass.tofuxia-engine'
-version = '0.1.0'
+version = '0.2.0'
 
 ext.lwjglVersion = '3.4.1'
 ext.jomlVersion = '1.10.9'

@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = 'tofuxia-engine'
-include 'engine-core', 'render-api', 'engine-ui', 'vulkan-renderer', 'engine-app', 'engine-desktop'
+include 'engine-core', 'render-api', 'engine-ui', 'vulkan-renderer', 'engine-default-assets', 'engine-app', 'engine-desktop'
