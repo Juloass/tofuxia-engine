@@ -1,8 +1,9 @@
 engine/fonts/fonts.properties
-engine/fonts/OFL-1.1.txt
+engine/fonts/ofl-1-1.txt
 engine/fonts/inter-variable.ttf
 engine/lang/en_us.json
 engine/lang/fr_fr.json
+engine/textures/gui/title/tofuxia-studios.png
 engine/shaders/clustered_lighting.comp.glsl
 engine/shaders/common/foliage_wind.glsl
 engine/shaders/common/global_ubo.glsl

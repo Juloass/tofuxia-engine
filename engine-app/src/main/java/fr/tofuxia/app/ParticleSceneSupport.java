@@ -1,7 +1,7 @@
 package fr.tofuxia.app;
 
-import io.github.juloass.particle.ParticleEffectDefinition;
-import io.github.juloass.particle.ParticleRenderPacket;
+import fr.tofuxia.particles.ParticleEffectDefinition;
+import fr.tofuxia.particles.ParticleRenderPacket;
 import fr.tofuxia.render.ParticleMeshData;
 import fr.tofuxia.render.ParticleTextureAtlas;
 import org.joml.Vector3f;

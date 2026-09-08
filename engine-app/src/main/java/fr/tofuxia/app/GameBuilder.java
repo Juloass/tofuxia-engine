@@ -17,6 +17,7 @@ public final class GameBuilder {
     private String windowTitle = "Java Game";
     private Path assetRoot = Path.of("assets");
     private Path fontManifest = Path.of("engine/fonts/fonts.properties");
+    private String loadingLogo = "engine/textures/gui/title/tofuxia-studios.png";
     private String connectionBackground = "";
     private String defaultScene = "render";
     private final Map<String, GameSceneFactory> scenes = new LinkedHashMap<>();
@@ -41,6 +42,12 @@ public final class GameBuilder {
     /** Selects the role-to-font manifest relative to {@link #assetRoot}. */
     public GameBuilder fontManifest(Path value) {
         fontManifest = java.util.Objects.requireNonNull(value, "value");
+        return this;
+    }
+
+    /** Selects the startup logo from the layered asset packs, or disables it with an empty path. */
+    public GameBuilder loadingLogo(String value) {
+        loadingLogo = java.util.Objects.requireNonNull(value, "value").replace('\\', '/');
         return this;
     }
 
@@ -114,6 +121,7 @@ public final class GameBuilder {
                 windowTitle,
                 assetRoot,
                 fontManifest,
+                loadingLogo,
                 connectionBackground,
                 defaultScene,
                 Map.copyOf(scenes),

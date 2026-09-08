@@ -1,6 +1,6 @@
 package fr.tofuxia.app;
 
-import io.github.juloass.particle.ParticleEventSink;
+import fr.tofuxia.particles.ParticleEventSink;
 import io.github.juloass.audio.AudioEngine;
 import io.github.juloass.audio.MixerGraph;
 import io.github.juloass.resource.pack.ResourceManager;

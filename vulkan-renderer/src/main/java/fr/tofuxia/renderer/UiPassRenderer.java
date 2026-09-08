@@ -6,6 +6,10 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -170,6 +174,8 @@ final class UiPassRenderer implements AutoCloseable {
     private float logicalScaleX=1, logicalScaleY=1;
     private int surfaceCount, compositeSurfaceCount, clippedBatchCount;
     private final Map<String, Long> textureSets = new HashMap<>();
+    private final Map<String, VulkanContext.GpuImage> bootstrapTextures = new HashMap<>();
+    private final Map<String, BootstrapRenderer.TextureSize> bootstrapTextureSizes = new HashMap<>();
     private final Map<String, Long> fontSets = new HashMap<>();
     private final List<VulkanContext.GpuImage> alternateFontImages = new ArrayList<>();
 
@@ -179,6 +185,11 @@ final class UiPassRenderer implements AutoCloseable {
 
     UiPassRenderer(VulkanContext context, FontAtlas font, List<FontAtlas> alternateFonts,
                    TextureManager textures) {
+        this(context, font, alternateFonts, textures, Map.of());
+    }
+
+    UiPassRenderer(VulkanContext context, FontAtlas font, List<FontAtlas> alternateFonts,
+                   TextureManager textures, Map<String, byte[]> encodedTextures) {
         this.context = context;
         this.textures = textures;
         ByteBuffer pixels = BufferUtils.createByteBuffer(font.pixels().length);
@@ -239,7 +250,12 @@ final class UiPassRenderer implements AutoCloseable {
         for (FontAtlas alternateFont : alternateFonts) {
             if (!alternateFont.atlasId().equals(font.atlasId())) registerFont(alternateFont);
         }
+        encodedTextures.forEach(this::registerBootstrapTexture);
         pipeline = createPipeline();
+    }
+
+    BootstrapRenderer.TextureSize textureSize(String path) {
+        return bootstrapTextureSizes.get(path);
     }
 
     void upload(UiRenderData data) {
@@ -322,8 +338,16 @@ final class UiPassRenderer implements AutoCloseable {
         String key = batch.texture() + "#" + batch.pixelArt();
         Long cached = textureSets.get(key);
         if (cached != null) return cached;
-        Texture2D texture = textures.load(batch.texture(),
-                batch.pixelArt() ? SamplerSettings.PIXEL_ART : SamplerSettings.UI_CLAMP, false);
+        VulkanContext.GpuImage image;
+        if (textures == null) {
+            image = bootstrapTextures.get(batch.texture());
+            if (image == null) {
+                throw new IllegalStateException("Bootstrap UI requested an unregistered texture " + batch.texture());
+            }
+        } else {
+            image = textures.load(batch.texture(),
+                    batch.pixelArt() ? SamplerSettings.PIXEL_ART : SamplerSettings.UI_CLAMP, false).image();
+        }
         VkDescriptorSetAllocateInfo allocInfo = VkDescriptorSetAllocateInfo.calloc(stack)
                 .sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO)
                 .descriptorPool(descriptorPool)
@@ -331,9 +355,31 @@ final class UiPassRenderer implements AutoCloseable {
         LongBuffer pSet = stack.mallocLong(1);
         VulkanContext.check(vkAllocateDescriptorSets(context.device(), allocInfo, pSet), "allocate UI texture descriptor");
         long set = pSet.get(0);
-        updateDescriptorSet(set,texture.image().view(),batch.pixelArt()?pixelSampler:linearSampler);
+        updateDescriptorSet(set,image.view(),batch.pixelArt()?pixelSampler:linearSampler);
         textureSets.put(key, set);
         return set;
+    }
+
+    private void registerBootstrapTexture(String path, byte[] encoded) {
+        try {
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(encoded));
+            if (image == null) throw new IOException("unsupported image format");
+            int width = image.getWidth();
+            int height = image.getHeight();
+            int[] argb = image.getRGB(0, 0, width, height, null, 0, width);
+            ByteBuffer rgba = BufferUtils.createByteBuffer(width * height * 4);
+            for (int pixel : argb) {
+                rgba.put((byte) ((pixel >> 16) & 0xFF));
+                rgba.put((byte) ((pixel >> 8) & 0xFF));
+                rgba.put((byte) (pixel & 0xFF));
+                rgba.put((byte) ((pixel >> 24) & 0xFF));
+            }
+            rgba.flip();
+            bootstrapTextures.put(path, context.createTextureImage(width, height, rgba, false));
+            bootstrapTextureSizes.put(path, new BootstrapRenderer.TextureSize(width, height));
+        } catch (IOException failure) {
+            throw new IllegalArgumentException("Cannot decode bootstrap texture " + path, failure);
+        }
     }
 
     private void registerFont(FontAtlas font) {
@@ -501,6 +547,7 @@ final class UiPassRenderer implements AutoCloseable {
         context.destroySampler(pixelSampler);
         context.destroySampler(linearSampler);
         alternateFontImages.forEach(context::destroyImage);
+        bootstrapTextures.values().forEach(context::destroyImage);
         context.destroyImage(fontImage);
         context.destroyImage(noiseImage);
     }

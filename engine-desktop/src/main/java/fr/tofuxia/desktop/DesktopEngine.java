@@ -28,7 +28,7 @@ import io.github.juloass.resource.pack.ResourceSnapshot;
 import io.github.juloass.audio.AudioEngine;
 import io.github.juloass.audio.openal.OpenAlAudioEngine;
 import io.github.juloass.audio.openal.OpenAlConfiguration;
-import io.github.juloass.particle.ParticleEventSink;
+import fr.tofuxia.particles.ParticleEventSink;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -112,9 +112,13 @@ public final class DesktopEngine {
             FontAtlas uiFont = activeFonts.atlas(FontRole.UI, 15);
             FontAtlas debugFont = activeFonts.atlas(FontRole.DEBUG, 15);
             FontAtlas gameTitleFont = activeFonts.atlas(FontRole.GAME_TITLE, 52);
+            java.util.Map<String, byte[]> bootstrapTextures = config.loadingLogo().isBlank()
+                    ? java.util.Map.of()
+                    : java.util.Map.of(config.loadingLogo(), readAsset(activeAssets, config.loadingLogo()));
+            bootstrap = new BootstrapRenderer(window, uiFont, gameTitleFont, bootstrapTextures);
             LoadingScreen loadingScreen = new LoadingScreen(uiFont, gameTitleFont, (float) initialGraphics.uiScale(),
-                    (float) initialSettings.accessibility().textScale(), localization, config.windowTitle());
-            bootstrap = new BootstrapRenderer(window, uiFont, gameTitleFont);
+                    (float) initialSettings.accessibility().textScale(), localization, config.windowTitle(),
+                    config.loadingLogo(), bootstrap.textureSize(config.loadingLogo()));
             bootstrap.render(loadingScreen.build(displayMetrics(window),
                     new LoadingManager.Snapshot(fr.tofuxia.app.AppState.BOOT_LOADING,
                             LoadingPhase.CONFIGURATION,"engine:configuration","Reading game configuration",0,"",0,1)));
@@ -229,6 +233,15 @@ public final class DesktopEngine {
                 ResourceDomain.ASSETS,
                 value.substring(0, separator),
                 value.substring(separator + 1));
+    }
+
+    private static byte[] readAsset(ResourceSnapshot assets, String path) {
+        try {
+            return assets.requireResource(resourcePath(java.nio.file.Path.of(path)))
+                    .readAllBytes(16L * 1024L * 1024L);
+        } catch (java.io.IOException failure) {
+            throw new IllegalStateException("Cannot read bootstrap asset " + path, failure);
+        }
     }
 
     private static java.util.List<String> availableDisplayResolutions() {

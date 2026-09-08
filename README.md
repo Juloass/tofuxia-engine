@@ -10,6 +10,7 @@ Reusable Java 21 game-client modules extracted from the proven Tofuxia desktop c
 - `vulkan-renderer`: LWJGL Vulkan implementation, materials, meshes, glTF, lighting, and shadows.
 - `engine-app`: game module, scene, loading, input, and application-loop contracts.
 - `engine-desktop`: GLFW/OpenAL desktop host with an optional game-provided network integration.
+- `engine-default-assets`: generic translations, Inter fallback fonts, shaders, and the Tofuxia Studios startup mark.
 
 Every module is published separately under `io.github.juloass.tofuxia-engine`. The repository remains a monorepo because API changes across rendering, application, and desktop seams must be tested and released atomically.
 
@@ -20,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.github.juloass.tofuxia-engine:engine-desktop:0.1.0'
+    implementation 'io.github.juloass.tofuxia-engine:engine-desktop:0.3.0'
     runtimeOnly 'org.lwjgl:lwjgl::natives-windows'
     runtimeOnly 'org.lwjgl:lwjgl-freetype::natives-windows'
     runtimeOnly 'org.lwjgl:lwjgl-glfw::natives-windows'

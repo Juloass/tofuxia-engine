@@ -13,6 +13,7 @@ public record GameConfig(
         String windowTitle,
         Path assetRoot,
         Path fontManifest,
+        String loadingLogo,
         String connectionBackground,
         String defaultScene,
         Map<String, GameSceneFactory> scenes,

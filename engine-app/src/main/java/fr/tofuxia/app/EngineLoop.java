@@ -1,13 +1,13 @@
 package fr.tofuxia.app;
 
-import io.github.juloass.particle.ParticleEngine;
-import io.github.juloass.particle.ParticleEffectDefinition;
+import fr.tofuxia.particles.ParticleEngine;
+import fr.tofuxia.particles.ParticleEffectDefinition;
 import io.github.juloass.resource.pack.ResourceSnapshot;
-import io.github.juloass.particle.ParticleRenderPacket;
-import io.github.juloass.particle.ParticleSpawnContext;
-import io.github.juloass.particle.ParticleUpdateContext;
-import io.github.juloass.particle.ParticleEventSink;
-import io.github.juloass.particle.Vec3;
+import fr.tofuxia.particles.ParticleRenderPacket;
+import fr.tofuxia.particles.ParticleSpawnContext;
+import fr.tofuxia.particles.ParticleUpdateContext;
+import fr.tofuxia.particles.ParticleEventSink;
+import fr.tofuxia.particles.Vec3;
 import fr.tofuxia.render.Camera;
 import fr.tofuxia.render.FontCatalog;
 import fr.tofuxia.render.FontRole;
@@ -792,7 +792,7 @@ public final class EngineLoop {
             particleUpdateStart = System.nanoTime();
             particles.update(dt, new ParticleUpdateContext(
                     new Vec3(eye.x, eye.y, eye.z),
-                    io.github.juloass.particle.ParticleCollisionProvider.NONE,
+                    fr.tofuxia.particles.ParticleCollisionProvider.NONE,
                     Map.of(), particleEventSink));
             particleUpdateEnd = System.nanoTime();
             particleBuildStart = System.nanoTime();

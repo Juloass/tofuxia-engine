@@ -9,7 +9,7 @@ dependencies {
 	api 'io.github.juloass:localization-core:0.1.0'
 	api 'io.github.juloass:audio-core:1.0.0'
 	api 'io.github.juloass:input-core:1.0.0'
-	api 'io.github.juloass:particle-engine:1.0.0'
+	api 'io.github.juloass:squall-core:0.1.5'
 	api project(':vulkan-renderer')
 	implementation "org.joml:joml:${rootProject.ext.jomlVersion}"
 }

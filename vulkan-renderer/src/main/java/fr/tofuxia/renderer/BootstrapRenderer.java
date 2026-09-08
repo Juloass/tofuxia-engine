@@ -26,9 +26,19 @@ public final class BootstrapRenderer implements AutoCloseable {
     }
 
     public BootstrapRenderer(long window, FontAtlas uiFont, FontAtlas gameTitleFont) {
-        context = new VulkanContext(window);
-        ui = new UiPassRenderer(context, uiFont, java.util.List.of(gameTitleFont), null);
+        this(window, uiFont, gameTitleFont, java.util.Map.of());
     }
+
+    public BootstrapRenderer(long window, FontAtlas uiFont, FontAtlas gameTitleFont,
+                             java.util.Map<String, byte[]> textures) {
+        context = new VulkanContext(window);
+        ui = new UiPassRenderer(context, uiFont, java.util.List.of(gameTitleFont), null,
+                java.util.Map.copyOf(textures));
+    }
+
+    public TextureSize textureSize(String path) { return ui.textureSize(path); }
+
+    public record TextureSize(int width, int height) {}
 
     public void render(UiRenderData data) {
         VkCommandBuffer primary = context.beginFrame(new float[]{.018f,.024f,.032f,1});
