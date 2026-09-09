@@ -44,11 +44,19 @@ final class LoadingScreen {
         float titleY;
         float globalBarY;
         if (!loadingLogo.isBlank() && loadingLogoSize != null) {
-            float logoH=Math.min(220,h*.34f);
-            float logoW=logoH*loadingLogoSize.width()/loadingLogoSize.height();
+            // Minecraft's mojangstudios.png convention stores the left half of
+            // the wordmark in the top half of the square texture and the right
+            // half in the bottom half. Reconstruct the two strips side by side.
+            float logoAspect=4f*loadingLogoSize.width()/loadingLogoSize.height();
+            float logoW=Math.min(w*.75f,h);
+            float logoH=Math.min(logoW/logoAspect,h*.34f);
+            logoW=logoH*logoAspect;
             titleY=Math.max(24,h*.5f-logoH*.75f-52);
-            ui.sprite((w-logoW)*.5f,titleY,(w+logoW)*.5f,titleY+logoH,
-                    0,0,1,1,loadingLogo,false,rgba(1,1,1,1));
+            float logoX=(w-logoW)*.5f,logoMiddle=logoX+logoW*.5f;
+            ui.sprite(logoX,titleY,logoMiddle,titleY+logoH,
+                    0,0,1,.5f,loadingLogo,false,rgba(1,1,1,1));
+            ui.sprite(logoMiddle,titleY,logoX+logoW,titleY+logoH,
+                    0,.5f,1,1,loadingLogo,false,rgba(1,1,1,1));
             globalBarY=titleY+logoH+24;
         } else {
             titleY=Math.max(48,h*.5f-gameTitleFont.lineHeight()-52);
